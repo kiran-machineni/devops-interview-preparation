@@ -2,8 +2,7 @@
 
 🚧 **Note: This repository is a work in progress. Contributions and improvements are welcome, but some sections may still be incomplete or under development.**
 
-
-Welcome to the DevOps Interview Questions repository! This repository contains an extensive list of DevOps interview questions and answers to help you prepare for interviews or assess candidates.
+Welcome to the DevOps Interview Questions repository! This repository contains a comprehensive list of DevOps interview questions and answers to help you prepare for interviews or assess candidates.
 
 ## Table of Contents
 
