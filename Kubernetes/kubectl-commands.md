@@ -1,13 +1,45 @@
 # Kubernetes CLI Commands
 
-#### 1. Display the current Kubernetes Context
+#### 1. Kubernetes Context
 
-Displays the name of the current Kubernetes context in your kubeconfig file.
+##### Displays the name of the current Kubernetes context in your kubeconfig file.
 
 ```bash
 kubectl config current-context
 ```
+##### Change context
+> The command kubectl config use-context test is used to switch the current Kubernetes context to "test." A Kubernetes context is a combination of a cluster, user, and namespace. By running this command, you are instructing kubectl to use the configuration details associated with the "test" context, allowing you to interact with the Kubernetes cluster specified in that context.
 
+> Please note that the actual effect of this command depends on how your kubeconfig file is configured and whether a context named "test" exists. If the context is successfully switched, subsequent kubectl commands will be applied to the cluster, user, and namespace specified in the "test" context.
+
+```bash
+kubectl config use-context test
+```
+
+##### What is [Krew](https://krew.sigs.k8s.io/) ?
+
+Krew is the plugin manager for kubectl command-line tool.
+
+kubectl krew plugins
+- [kube ctx](kubectx.dev) for switching between context
+- kube ns for switching between namespaces
+
+```bash
+# Get list of contexts
+kubectl ctx
+
+# Switch to a context
+kubectl ctx <context name>
+ kubectl ctx kind-dev01
+
+# Get list of namespaces
+kubectl ns
+
+# switch to a namespace
+kubectl ns <namespace_name>
+kubectl ns kube-public
+```
+---
 #### 2. Kubernetes Manifests
 
 ##### Validate the manifest file
