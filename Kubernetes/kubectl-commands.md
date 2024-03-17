@@ -1,222 +1,180 @@
 # Kubernetes CLI Commands
 
-#### 1. Kubernetes Context
+## 1. Kubernetes Context
 
-##### Displays the name of the current Kubernetes context in your kubeconfig file
+- **Display current context:**
 
-```bash
-kubectl config current-context
-```
+  ```bash
+  kubectl config current-context
+  ```
 
-##### Change context
->
-> The command <b><i>kubectl config use-context test </b></i>is used to switch the current Kubernetes context to "test." A Kubernetes context is a combination of a cluster, user, and namespace. By running this command, you are instructing kubectl to use the configuration details associated with the "test" context, allowing you to interact with the Kubernetes cluster specified in that context.
+- **Change context:**
 
-> Please note that the actual effect of this command depends on how your kubeconfig file is configured and whether a context named "test" exists. If the context is successfully switched, subsequent kubectl commands will be applied to the cluster, user, and namespace specified in the "test" context.
+  ```bash
+  kubectl config use-context test
+  ```
 
-```bash
-kubectl config use-context test
-```
+  - Switches the active Kubernetes context to "test".
+  - A Kubernetes context combines cluster, user, and namespace details.
 
-##### What is [Krew](https://krew.sigs.k8s.io/) ?
+## 2. Kubernetes Manifests
 
-Krew is the plugin manager for kubectl command-line tool.
+### Understanding Manifests
 
-kubectl krew plugins
+Kubernetes manifests are YAML or JSON files defining the desired state of
+objects within a Kubernetes cluster. Essential components of a manifest include:
 
-- [kube ctx](kubectx.dev) for switching between context
-- kube ns for switching between namespaces
+- **Metadata:** Object name, labels, annotations for identification and
+  organization.
+- **Spec:** The desired state specification including container images,
+  replicas, configurations.
+- **Status:** (Read-only) Current state of the object, provided by Kubernetes.
 
-```bash
-# Get list of contexts
-kubectl ctx
+### Key Manifest Actions
 
-# Switch to a context
-kubectl ctx <context name>
- kubectl ctx kind-dev01
+**2.1 Validation**
 
-# Get list of namespaces
-kubectl ns
+- **Syntax and Semantic Validation:**
 
-# switch to a namespace
-kubectl ns <namespace_name>
-kubectl ns kube-public
-```
+  ```bash
+  kubectl apply --validate=true -f deployment.yaml
+  ```
 
----
+- **Dry Run (Client-Side Simulation):**
+  ```bash
+  kubectl apply --dry-run=client -f deployment.yaml
+  ```
 
-#### 3. Connect to Remote Kubernetes Cluster
+**2.2 Applying Manifests**
 
+- **Apply Specific Objects:**
 
+  ```bash
+  kubectl apply -f pod.yaml          # Pod
+  kubectl apply -f deployment.yaml   # Deployment
+  kubectl apply -f service.yaml      # Service
+  # ...and so on for configmaps, secrets, volumes
+  ```
 
-- ##### Connect to AWS EKS(Elastic Kubernetes Service) Cluster
+- **Apply Manifests in a Folder:**
+  ```bash
+  kubectl apply -f /path/to/your/folder
+  ```
 
-- ##### Connect to Azure AKS(Azure Kubernetes Service) Cluster
-
-- ##### Connect to GCP GKE(Google Kubernetes Engine) Cluster
-
----
-
-#### 3. Kubernetes Manifests
-
-##### Validate the manifest file
-
-> It checks the configuration for syntactic and semantic correctness but does not make any changes to the cluster.
-
-```bash
-kubectl apply --validate=true -f deployment.yaml
-```
-
-##### Dry run
-
-> This command performs a 'dry run' of the apply operation, simulating the process of applying the configuration to the cluster without modifying the cluster state. The --dry-run=client flag specifies that the dry run is performed on the client side. During this process, the configuration is validated, and the modified configuration that would be applied is printed, allowing users to preview the changes that would occur.
+**2.3 Inspecting Kubernetes Objects**
 
 ```bash
-kubectl apply --dry-run=client -f deployment.yaml
-```
-
-##### Apply manifest files
-
-```bash
-
-# Apply pod
-kubectl apply -f pod.yaml
-
-# Apply deployments
-kubectl apply -f deployment.yaml
-
-# Apply service
-kubectl apply -f service.yaml
-
-# Apply configmap
-kubectl apply -f configmap.yaml
-
-# Apply secrets
-kubectl apply -f secrets.yaml
-
-# Apply persistent volume
-kubectl apply -f pv.yaml
-
-# Apply persistent volume claim
-kubectl apply -f pvc.yaml
-```
-
-##### Apply all manifests in a folder to the Kubernetes cluster
-
-```bash
-kubectl apply -f /path/to/your/folder
-```
-
-##### Get kubernetes objects
-
-```bash
-# Get pods
 kubectl get pods
-
-# Get deployments
 kubectl get deployments
-
-# Get services
 kubectl get svc
-
-# Get nodes in a cluster
-kubectl get nodes
-
-# Get the secrets
 kubectl get secrets
-
-# Get the persistent volumes
 kubectl get pv
+
+# output into a file
+kubectl get deployment nginx-deployment -o yaml > nginx-deployment.yaml
+
+kubectl get <resource_type> <resource_name> --namespace=<namespace> -o yaml > local-file.yaml
 ```
-##### Edit kubernetes objects
+
+**2.4 Edit Kubernetes Objects**
 
 ```bash
 kubectl edit deployment -n kube-system coredns
 ```
 
-
-##### Delete kubernetes objects
+**2.5 Delete Kubernetes Objects**
 
 ```bash
-# Delete a deployment that match a specific label selector
-kubectl delete deployment -l app=redis
+# Delete deployments that match a specific label selector
+kubectl delete deployments -l app=redis
 
-# Delete deployment with name
+# Delete deployment by name
 kubectl delete deployment frontend
 
-# Delete service with name
+# Delete service by name
 kubectl delete service nodejs-app-service
 ```
 
-##### Scale deployments
+**2.6 Scale Deployments**
 
 ```bash
 kubectl scale deployment your-deployment --replicas=3
 ```
 
-##### Roll back to a previous version
+**2.7 Roll back to a previous version**
 
-> This command is used to undo a recent deployment rollout in Kubernetes. This command reverts the specified deployment to the previous revision, effectively rolling back any changes introduced in the latest deployment.
+Rolling back any changes introduced in the latest deployment.
 
 ```bash
 kubectl rollout undo deployment/your-deployment
 ```
 
-##### Deploy resources without creating yaml configurations
+**2.8 Deploy Resources Without Creating YAML Configurations**
 
 ```bash
-# Create deployment without manifest
+# Create deployment without a manifest
 kubectl create deployment nginx --image=nginx
 
-# Create pod without manifest
+# Create pod without a manifest
 kubectl run nginx --image=nginx --restart=never
 ```
 
-#### 4. Kubernetes Namespaces
+## 3. Kubernetes Namespaces
 
-> In Kubernetes, a namespace is a virtual cluster inside a physical cluster. It is a way to divide cluster resources between multiple users (or projects, teams, applications, etc.) on the same cluster. Namespaces provide a scope for names and are intended for use in environments with many users spread across multiple teams or projects.
+- **Virtual Clusters:** Namespaces function like virtual clusters within a
+  physical Kubernetes cluster, enabling the logical division of resources.
+- **Isolation:** Namespaces keep resources separate, preventing naming conflicts
+  and promoting better organization in multi-user or multi-project environments.
+- **Resource Management:** Namespaces allow for setting resource quotas (CPU,
+  memory), ensuring fair allocation of cluster resources between different teams
+  or projects.
+- **Default Namespace:** Kubernetes automatically assigns resources to the
+  `default` namespace when a namespace is not explicitly specified during
+  creation.
 
-> Namespaces provide isolation, resource quotas and logical partitioning.
-When you create an object in Kubernetes without specifying a namespace, the resources are created in <b>default</b> namespace.
-
-> deleting namespace will delete all the resources in that namespace.
+**Important Note:** Deleting a namespace **permanently removes all resources
+associated with it**. Handle with care!
 
 ```bash
-# Create namespace
+# Create a namespace called 'test'
 kubectl create namespace test
 
-# Get namespaces
+# List all namespaces
 kubectl get namespaces
 
-# Delete namespace
+# Delete the 'test' namespace
 kubectl delete namespace test
 
-# Dry run before deleting
+# Perform a test without deleting (highly recommended before deletion)
 kubectl delete namespace <namespace-name> --dry-run=client
 
-# Get deployments with namespace
+# Retrieve deployments within a namespace
 kubectl get deployments -n <namespace>
 ```
 
-#### 5. kubectl describe
+## 4. Kubectl Describe
 
-> Show details of a specific resource or group of resources.
-This command joins many API calls together to form a detailed description of a given resource or group of resources.
+The `kubectl describe` command provides in-depth information about Kubernetes
+resources. It gathers data from multiple API calls to paint a comprehensive
+picture of the resource's state, configuration, associated events, and more.
+
+- **Debugging:** Get detailed insights to troubleshoot issues with pods,
+  services, nodes, etc.
+- **Understanding State:** See the current status of a resource, including its
+  configuration, resource requests, and any related events.
 
 ```bash
-# Describe node
+# Describe a specific node named 'node-1'
 kubectl describe node node-1
 
-# Describe all pods
+# Describe all pods in the current namespace
 kubectl describe pods
 
-# Describe pod
+# Describe a specific pod named 'nginx'
 kubectl describe pods/nginx
 ```
 
----
-
-#### 6. Pod
+## 5. Pod
 
 ```bash
 # Copy files into container in pod
@@ -236,44 +194,93 @@ kubectl set image deployment/nginx-deployment nginx-container=nginx:latest
 
 # Port forward in a pod
 kubectl port-forward pod/<pod_name> -n <namespace> <hostport>:<service port no. in cluster>
+
 kubectl port-forward pod/time-check -n datacenter 8080:80
 ```
 
+## 6. Kubernetes Services
+
+- **Abstraction for Pods:** Services provide a stable network endpoint for
+  accessing pods, which are often ephemeral. They manage routing and load
+  balancing traffic to a set of pods.
+- **Service Discovery:** Services enable discovery within a cluster, so
+  applications can communicate without needing to track individual pod IPs.
+
+**Service Types**
+
+- **NodePort:** Exposes the service on a static port on each node of the
+  cluster. External traffic can access the service through any node's IP and the
+  specified port.
+- **LoadBalancer:** Provisions an external cloud load balancer (if supported by
+  your Kubernetes provider). Distributes traffic across pods.
+- **ClusterIP:** The default type. Exposes the service internally within the
+  cluster, providing a stable IP.
+- **ExternalName:** Maps a service to a DNS name outside the cluster.
+
+**Example:**
+
 ```bash
-# Port forward in service
-kubectl port-forward service/node-app-service 8080:80
+# simple-service.yaml
+
+# https://kubernetes.io/docs/concepts/services-networking/service/
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-simple-service
+spec:
+  type: ClusterIP
+  selector:
+    app: service-simple-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+---
+#multi-port-service.yaml
+
+# https://kubernetes.io/docs/concepts/services-networking/service/#multi-port-services
+apiVersion: v1
+kind: Service
+metadata:
+  name: multi-port-service-service
+spec:
+  selector:
+    app: MyApp
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 8080
+    - name: https
+      protocol: TCP
+      port: 443
+      targetPort: 8443
 ```
 
-##### Change Nodeport of service in Kubernetes service
-
 ```bash
+# Change Nodeport port number from cli
 kubectl patch service your-service -p '{"spec": {"ports": [{"nodePort": 32165}]}}'
 ```
 
-##### Get manifest configuration of kubernetes object
+## 7. Port Forward
 
-> Retrieve the YAML representation of a Kubernetes deployment. The output is then redirected to a file named nginx-deployment.yaml. This YAML file will contain the configuration details of the specified deployment.
-
-```bash
-kubectl get deployment nginx-deployment -o yaml > nginx-deployment.yaml
-```
-
-```bash
-kubectl get <resource_type> <resource_name> --namespace=<namespace> -o yaml > local-file.yaml
-```
-
----
-
-#### 7. port-forward
+Port forwarding in Kubernetes creates a tunnel between your local machine and a
+service (or pod) running within the cluster. This is particularly useful for
+debugging and accessing services not normally exposed outside the cluster.
 
 ```bash
 kubectl port-forward service/node-app-service 8080:80
 ```
 
-> When you use <i>kubectl port-forward<i> , it establishes a local port forwarding from your machine to service in the cluster.
+**8080 (local port):** The port to access on your local machine
+(http://localhost:8080).
 
-> 8080 on your local machine will be forwarded to the port 80 of the service within the cluster. This is the port where the service is exposed.
-When you access <http://localhost:8080> on your machine, it's equivalent to accessing the service within the Kubernetes cluster on port 80, which, in turn, directs the traffic to the pods' targetPort (8080 in this case).
+**80 (service port):** The port of the service within the Kubernetes cluster.
+When you access http://localhost:8080, the traffic is forwarded to the service
+inside the cluster, which then directs it to the pods associated with that
+service.
+
+**Example Service Configuration**
 
 ```bash
 # Example service
@@ -292,38 +299,41 @@ spec:
     nodePort: 30011
 ```
 
-> ports:
-      - protocol: TCP
-          port: 80(service port within the cluster)
-          targetPort: 8080(containerPort in deployment) (pod port)
-          nodePort: 30011(port exposed to outside cluster traffic)
-> Inside the cluster, the service is accessible at localhost:80.
-The service forwards traffic to the Pods on port 8080.
-Externally, the service is accessible at NODE_IP:30011, where NODE_IP is the IP address of any of the cluster nodes.
+**Key Ports**
 
-> When you use port-forward, it will directly send traffic to the pod port.
----
+**port:** The port used to access the service from within the cluster.
+**targetPort:** The port on the pod where the application is listening.
+**nodePort:** The port exposed for accessing the service from outside the
+cluster.
 
-#### 8. Kubernetes service
+**Summary**
 
-- NodePort (expose service on the static port on every node in the cluster)
-- LoadBalancer (Cloud Load Balancer)
-- ClusterIP (expose service internally in a cluster)
-- ExternalName (which allows you to map a service to a DNS name)
+**Cluster Internal:** The service is accessible on localhost:80. **External:**
+The service is accessible on NODE_IP:30011 (where NODE_IP is any node's IP).
 
----
+## 8. Kustomize
 
-#### 9. [kustomize](https://kustomize.io/)
-
-kustomization is a configuration management for k8s, without using templating.
-kustomization comes with kubectl.
+Kustomize is a configuration management for k8s, without using templating.
+Kustomize comes with kubectl.
 
 ```bash
 # Apply kustomization.yaml configuration
 kubectl apply -k myapp/
-```
 
-```bash
 # Cleaning up
 kubectl delete -k myapp/
+```
+
+## 9. Nodes
+
+```bash
+# Set a node to be unschedulable
+kubectl cordon node01
+
+# Set a node to be schedulable
+kubectl uncordon node01
+
+# Check node status
+kubectl get nodes
+
 ```

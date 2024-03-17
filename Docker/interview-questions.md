@@ -41,7 +41,7 @@ concern? If yes, how would you tackle this?**
 
 **4. What is the difference between docker image and docker layers?**
 
-- **Answer:**A Docker image is a read-only template that contains a set of
+- **Answer:** A Docker image is a read-only template that contains a set of
   instructions for creating a container. It includes everything needed to run a
   container, such as the operating system, application code, dependencies, and
   runtime environment. Docker layers, on the other hand, are the intermediate
