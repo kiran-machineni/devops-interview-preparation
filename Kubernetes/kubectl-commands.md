@@ -2,13 +2,15 @@
 
 #### 1. Kubernetes Context
 
-##### Displays the name of the current Kubernetes context in your kubeconfig file.
+##### Displays the name of the current Kubernetes context in your kubeconfig file
 
 ```bash
 kubectl config current-context
 ```
+
 ##### Change context
-> The command kubectl config use-context test is used to switch the current Kubernetes context to "test." A Kubernetes context is a combination of a cluster, user, and namespace. By running this command, you are instructing kubectl to use the configuration details associated with the "test" context, allowing you to interact with the Kubernetes cluster specified in that context.
+>
+> The command <b><i>kubectl config use-context test </b></i>is used to switch the current Kubernetes context to "test." A Kubernetes context is a combination of a cluster, user, and namespace. By running this command, you are instructing kubectl to use the configuration details associated with the "test" context, allowing you to interact with the Kubernetes cluster specified in that context.
 
 > Please note that the actual effect of this command depends on how your kubeconfig file is configured and whether a context named "test" exists. If the context is successfully switched, subsequent kubectl commands will be applied to the cluster, user, and namespace specified in the "test" context.
 
@@ -21,6 +23,7 @@ kubectl config use-context test
 Krew is the plugin manager for kubectl command-line tool.
 
 kubectl krew plugins
+
 - [kube ctx](kubectx.dev) for switching between context
 - kube ns for switching between namespaces
 
@@ -39,8 +42,22 @@ kubectl ns
 kubectl ns <namespace_name>
 kubectl ns kube-public
 ```
+
 ---
-#### 2. Kubernetes Manifests
+
+#### 3. Connect to Remote Kubernetes Cluster
+
+
+
+- ##### Connect to AWS EKS(Elastic Kubernetes Service) Cluster
+
+- ##### Connect to Azure AKS(Azure Kubernetes Service) Cluster
+
+- ##### Connect to GCP GKE(Google Kubernetes Engine) Cluster
+
+---
+
+#### 3. Kubernetes Manifests
 
 ##### Validate the manifest file
 
@@ -111,6 +128,12 @@ kubectl get secrets
 # Get the persistent volumes
 kubectl get pv
 ```
+##### Edit kubernetes objects
+
+```bash
+kubectl edit deployment -n kube-system coredns
+```
+
 
 ##### Delete kubernetes objects
 
@@ -149,7 +172,7 @@ kubectl create deployment nginx --image=nginx
 kubectl run nginx --image=nginx --restart=never
 ```
 
-#### 3. Kubernetes Namespaces
+#### 4. Kubernetes Namespaces
 
 > In Kubernetes, a namespace is a virtual cluster inside a physical cluster. It is a way to divide cluster resources between multiple users (or projects, teams, applications, etc.) on the same cluster. Namespaces provide a scope for names and are intended for use in environments with many users spread across multiple teams or projects.
 
@@ -175,7 +198,7 @@ kubectl delete namespace <namespace-name> --dry-run=client
 kubectl get deployments -n <namespace>
 ```
 
-#### 4. kubectl describe
+#### 5. kubectl describe
 
 > Show details of a specific resource or group of resources.
 This command joins many API calls together to form a detailed description of a given resource or group of resources.
@@ -193,7 +216,7 @@ kubectl describe pods/nginx
 
 ---
 
-#### 5. Pod
+#### 6. Pod
 
 ```bash
 # Copy files into container in pod
@@ -241,7 +264,7 @@ kubectl get <resource_type> <resource_name> --namespace=<namespace> -o yaml > lo
 
 ---
 
-#### 6. port-forward
+#### 7. port-forward
 
 ```bash
 kubectl port-forward service/node-app-service 8080:80
@@ -281,7 +304,7 @@ Externally, the service is accessible at NODE_IP:30011, where NODE_IP is the IP 
 > When you use port-forward, it will directly send traffic to the pod port.
 ---
 
-#### 7. Kubernetes service
+#### 8. Kubernetes service
 
 - NodePort (expose service on the static port on every node in the cluster)
 - LoadBalancer (Cloud Load Balancer)
@@ -290,7 +313,7 @@ Externally, the service is accessible at NODE_IP:30011, where NODE_IP is the IP 
 
 ---
 
-#### 8. [kustomize](https://kustomize.io/)
+#### 9. [kustomize](https://kustomize.io/)
 
 kustomization is a configuration management for k8s, without using templating.
 kustomization comes with kubectl.
